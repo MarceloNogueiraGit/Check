@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR" style="background:#0f1117;">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist Sider / Rodotrem – JCE</title>
+<style>
+/* =====================================================
+   FORÇAR DARK MODE – funciona em Safari iOS
+===================================================== */
+:root {
+  color-scheme: dark;
+  --bg:         #0f1117;
+  --bg2:        #1a1d27;
+  --bg3:        #22263a;
+  --borda:      #2e3348;
+  --borda2:     #3a4060;
+  --texto:      #dde1f0;
+  --texto2:     #8b93b5;
+  --azul:       #1e4080;
+  --azul-h:     #2563c8;
+  --azul-topo:  #162d60;
+  --secao-bg:   #1c2540;
+  --secao-txt:  #7eb3f5;
+  --row-par:    #1e2135;
+  --ok:         #22c55e;
+  --ok-bg:      #052e16;
+  --ok-borda:   #166534;
+  --nok:        #ef4444;
+  --nok-bg:     #2d0b0b;
+  --nok-borda:  #7f1d1d;
+  --na:         #94a3b8;
+  --na-bg:      #1e2233;
+  --na-borda:   #3a4060;
+  --input-bg:   #141720;
+  --sombra:     0 2px 8px rgba(0,0,0,.5);
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+background: #0f1117 !important;
+color: #dde1f0 !important;
+}
+
+body {
+font-family: ‘Segoe UI’, Arial, sans-serif;
+font-size: 14px;
+padding: 14px;
+min-height: 100vh;
+}
+
+/* =====================================================
+TOPO
+===================================================== */
+.topo {
+background: #162d60 !important;
+color: #fff !important;
+padding: 10px 16px;
+border-radius: 7px 7px 0 0;
+display: flex;
+align-items: center;
+gap: 12px;
+border-bottom: 2px solid #2563c8;
+}
+.topo-logo {
+font-size: 21px; font-weight: 900; letter-spacing: 1px;
+background: #2563c8 !important;
+padding: 2px 11px; border-radius: 5px;
+color: #fff !important;
+}
+.topo-titulo { font-size: 15px; font-weight: 600; color: #c9d8f5 !important; }
+
+/* =====================================================
+CABEÇALHO
+===================================================== */
+.cabecalho-global {
+background: #1a1d27 !important;
+border: 1px solid #2e3348;
+border-top: none;
+border-radius: 0 0 7px 7px;
+padding: 10px 14px 12px;
+display: grid;
+grid-template-columns: 1fr 1fr 1fr 1fr;
+gap: 8px 14px;
+margin-bottom: 16px;
+}
+.cabecalho-global label {
+font-size: 10px; font-weight: 700; color: #8b93b5 !important;
+text-transform: uppercase; letter-spacing: .5px;
+display: block; margin-bottom: 4px;
+}
+.cabecalho-global input {
+width: 100%;
+border: 1px solid #3a4060;
+border-radius: 5px;
+padding: 6px 9px;
+font-size: 13px;
+background: #141720 !important;
+color: #dde1f0 !important;
+-webkit-text-fill-color: #dde1f0 !important;
+outline: none;
+transition: border .15s;
+-webkit-appearance: none;
+appearance: none;
+}
+.cabecalho-global input:focus { border-color: #2563c8; }
+.cabecalho-global input::placeholder { color: #3a4060 !important; opacity: 1; }
+
+/* data picker */
+input[type=“date”]::-webkit-calendar-picker-indicator { filter: invert(.7); }
+input[type=“date”]::-webkit-datetime-edit { color: #dde1f0 !important; -webkit-text-fill-color: #dde1f0 !important; }
+input[type=“date”]::-webkit-datetime-edit-fields-wrapper { background: transparent; }
+
+/* =====================================================
+CONTAINER LISTAS
+===================================================== */
+#listas { display: flex; flex-direction: column; gap: 16px; }
+
+/* =====================================================
+CARD
+===================================================== */
+.lista-card {
+background: #1a1d27 !important;
+border: 1px solid #2e3348;
+border-radius: 7px;
+overflow: hidden;
+box-shadow: 0 2px 8px rgba(0,0,0,.5);
+}
+.lista-header {
+background: #1e4080 !important;
+color: #fff !important;
+padding: 7px 13px;
+font-size: 13px; font-weight: 700;
+display: flex; align-items: center; justify-content: space-between;
+}
+.btn-remover-lista {
+background: transparent !important;
+border: 1px solid rgba(255,255,255,.3);
+color: rgba(255,255,255,.8) !important;
+border-radius: 4px; padding: 2px 9px;
+cursor: pointer; font-size: 11px;
+-webkit-appearance: none;
+}
+.btn-remover-lista:active { background: rgba(255,0,0,.3) !important; }
+
+/* =====================================================
+TABELA
+===================================================== */
+.checklist-table { width: 100%; border-collapse: collapse; }
+
+.checklist-table th {
+background: #22263a !important;
+color: #8b93b5 !important;
+font-size: 10px; font-weight: 800;
+text-transform: uppercase; letter-spacing: .4px;
+padding: 5px 6px; text-align: left;
+border-bottom: 1px solid #3a4060;
+}
+.checklist-table th.th-status { text-align: center; }
+.checklist-table th.th-qtd    { text-align: center; width: 56px; }
+
+.checklist-table tr.par td { background: #1e2135 !important; }
+
+.checklist-table td {
+padding: 5px 6px;
+border-bottom: 1px solid #2e3348;
+vertical-align: middle;
+font-size: 12px;
+color: #dde1f0 !important;
+background: #1a1d27 !important;
+}
+.checklist-table tr.par td { background: #1e2135 !important; }
+.checklist-table tr:last-child td { border-bottom: none; }
+.item-nome { font-weight: 500; }
+
+/* =====================================================
+SEÇÃO
+===================================================== */
+.section-row td {
+background: #1c2540 !important;
+font-size: 10px; font-weight: 800;
+text-transform: uppercase; letter-spacing: .6px;
+color: #7eb3f5 !important;
+padding: 4px 6px;
+border-bottom: 1px solid #3a4060 !important;
+}
+.sec-inner { display: flex; align-items: center; justify-content: space-between; }
+
+/* =====================================================
+CHECKBOXES OK / NOK / NA
+– Safari iOS: usar appearance:none para sumir o
+checkbox nativo, sem depender de display:none
+===================================================== */
+.check-group {
+display: flex; gap: 4px;
+justify-content: center; align-items: center;
+flex-wrap: nowrap;
+}
+.check-group label {
+display: inline-flex; align-items: center; gap: 3px;
+cursor: pointer;
+font-size: 11px; font-weight: 700;
+padding: 4px 8px; border-radius: 5px;
+border: 1.5px solid #3a4060;
+background: #22263a !important;
+color: #8b93b5 !important;
+-webkit-tap-highlight-color: transparent;
+user-select: none; white-space: nowrap;
+transition: background .12s, color .12s, border-color .12s;
+min-width: 44px; justify-content: center;
+}
+
+/* Esconder checkbox nativo de forma compatível com Safari iOS */
+.check-group input[type=“checkbox”] {
+position: absolute;
+opacity: 0;
+width: 0; height: 0;
+pointer-events: none;
+-webkit-appearance: none;
+appearance: none;
+}
+
+/* Estados ativos – aplicados via JS */
+.check-group label.ativo-ok {
+background: #052e16 !important;
+color: #22c55e !important;
+border-color: #166534 !important;
+font-weight: 900;
+}
+.check-group label.ativo-nok {
+background: #2d0b0b !important;
+color: #ef4444 !important;
+border-color: #7f1d1d !important;
+font-weight: 900;
+}
+.check-group label.ativo-na {
+background: #1e2233 !important;
+color: #94a3b8 !important;
+border-color: #4a5580 !important;
+font-weight: 900;
+}
+
+/* checkmark visível quando ativo */
+.chk-mark {
+display: none;
+font-size: 11px;
+line-height: 1;
+}
+.check-group label.ativo-ok  .chk-mark,
+.check-group label.ativo-nok .chk-mark,
+.check-group label.ativo-na  .chk-mark { display: inline; }
+
+/* =====================================================
+QUANTIDADE / VALIDADE
+===================================================== */
+.input-qtd {
+width: 50px;
+border: 1px solid #3a4060;
+border-radius: 4px; padding: 4px 5px;
+font-size: 12px; text-align: center;
+background: #141720 !important;
+color: #dde1f0 !important;
+-webkit-text-fill-color: #dde1f0 !important;
+display: block; margin: 0 auto;
+-webkit-appearance: none;
+}
+.input-qtd:focus { border-color: #2563c8; outline: none; }
+
+.input-validade {
+width: 90px;
+border: 1px solid #3a4060;
+border-radius: 4px; padding: 4px 5px;
+font-size: 11px; text-transform: uppercase; text-align: center;
+background: #141720 !important;
+color: #dde1f0 !important;
+-webkit-text-fill-color: #dde1f0 !important;
+-webkit-appearance: none;
+}
+.input-validade:focus { border-color: #2563c8; outline: none; }
+.input-validade::placeholder { color: #3a4060; opacity: 1; }
+
+.validade-wrap { margin-top: 4px; text-align: center; }
+.validade-label { font-size: 9px; color: #8b93b5 !important; display: block; }
+
+/* =====================================================
+BOTÃO DUPLICAR PNEUS
+===================================================== */
+.btn-add-pneus {
+background: #2563c8 !important; color: #fff !important;
+border: none; border-radius: 4px;
+padding: 2px 9px; font-size: 10px; font-weight: 700;
+cursor: pointer;
+-webkit-appearance: none;
+}
+
+/* =====================================================
+BOTÕES INFERIORES
+===================================================== */
+.botoes-fixos {
+display: flex; justify-content: center; gap: 12px;
+margin: 10px 0 18px; flex-wrap: wrap;
+}
+.btn-add-lista {
+padding: 10px 30px;
+background: #1e4080 !important; color: #fff !important;
+border: 1px solid #2563c8;
+border-radius: 7px; font-size: 14px; font-weight: 700;
+cursor: pointer;
+-webkit-appearance: none;
+}
+.btn-pdf {
+padding: 10px 30px;
+background: #7f1d1d !important; color: #fff !important;
+border: 1px solid #b91c1c;
+border-radius: 7px; font-size: 14px; font-weight: 700;
+cursor: pointer;
+-webkit-appearance: none;
+}
+
+/* traço quando não tem qtd */
+.sem-qtd { color: #3a4060 !important; display: block; text-align: center; }
+
+/* =====================================================
+IMPRESSÃO / PDF  –  A4 portrait, 3 colunas
+3 listas por página; 4ª → nova página
+===================================================== */
+@media print {
+
+@page { size: A4 portrait; margin: 6mm 5mm; }
+
+- { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+.botoes-fixos, .btn-remover-lista, .btn-add-pneus, .no-print {
+display: none !important;
+}
+
+html, body {
+background: #fff !important;
+color: #111 !important;
+padding: 0 !important;
+}
+
+.topo {
+background: #1a3060 !important;
+color: #fff !important;
+padding: 3px 8px !important;
+border-radius: 2px 2px 0 0 !important;
+border-bottom: 1.5pt solid #3060c0 !important;
+margin-bottom: 0 !important;
+}
+.topo-logo  { font-size: 9pt !important; padding: 1px 5px !important; background: #2563a8 !important; color: #fff !important; }
+.topo-titulo { font-size: 7.5pt !important; color: #c0d0f0 !important; }
+
+.cabecalho-global {
+background: #f5f7fa !important;
+border: 0.4pt solid #aab !important;
+border-top: none !important;
+border-radius: 0 0 2px 2px !important;
+padding: 3px 8px 4px !important;
+gap: 2px 8px !important;
+margin-bottom: 3mm !important;
+}
+.cabecalho-global label { color: #445 !important; font-size: 5.5pt !important; margin-bottom: 1px !important; }
+.cabecalho-global input {
+background: #fff !important; color: #111 !important;
+-webkit-text-fill-color: #111 !important;
+border: 0.4pt solid #99a !important;
+font-size: 6.5pt !important; padding: 1px 3px !important;
+}
+
+/* grade 3 colunas */
+#listas {
+display: grid !important;
+grid-template-columns: repeat(3, 1fr) !important;
+gap: 2.5mm !important;
+align-items: start !important;
+}
+
+.lista-card {
+background: #fff !important;
+border: 0.5pt solid #9aabb8 !important;
+border-radius: 2px !important;
+box-shadow: none !important;
+overflow: hidden !important;
+break-inside: avoid !important;
+page-break-inside: avoid !important;
+}
+.lista-card:nth-child(3n+1):not(:first-child) {
+break-before: page !important;
+page-break-before: always !important;
+}
+
+.lista-header {
+background: #1a3060 !important; color: #fff !important;
+padding: 2px 5px !important; font-size: 6.5pt !important;
+}
+
+.checklist-table th {
+background: #dde3ec !important; color: #334 !important;
+font-size: 5pt !important; padding: 1.5px 3px !important;
+letter-spacing: 0 !important; border-bottom: 0.5pt solid #aab !important;
+}
+.checklist-table tr.par td { background: #f5f8fc !important; }
+.checklist-table td {
+background: #fff !important; color: #111 !important;
+font-size: 5.5pt !important; padding: 1px 3px !important;
+border-bottom: 0.3pt solid #d0d8e4 !important;
+}
+.checklist-table tr:last-child td { border-bottom: none !important; }
+
+.section-row td {
+background: #dbe6f5 !important; color: #1a3060 !important;
+font-size: 5pt !important; padding: 1.5px 3px !important;
+border-bottom: 0.5pt solid #aabbd0 !important; letter-spacing: 0 !important;
+}
+
+.check-group { gap: 2px !important; }
+.check-group label {
+background: #f0f3f7 !important; color: #445 !important;
+border: 0.4pt solid #99a !important;
+padding: 1px 3px !important; font-size: 5pt !important;
+border-radius: 2px !important; min-width: 0 !important;
+}
+.check-group label.ativo-ok  { background: #d1fae5 !important; color: #065f46 !important; border-color: #059669 !important; }
+.check-group label.ativo-nok { background: #fee2e2 !important; color: #991b1b !important; border-color: #dc2626 !important; }
+.check-group label.ativo-na  { background: #f1f5f9 !important; color: #475569 !important; border-color: #94a3b8 !important; }
+
+.chk-mark { font-size: 6px !important; }
+
+.input-qtd {
+width: 20pt !important; background: #fff !important; color: #111 !important;
+-webkit-text-fill-color: #111 !important;
+border: 0.4pt solid #99a !important; font-size: 5pt !important; padding: 0 2px !important;
+}
+.input-validade {
+width: 34pt !important; background: #fff !important; color: #111 !important;
+-webkit-text-fill-color: #111 !important;
+border: 0.4pt solid #99a !important; font-size: 5pt !important; padding: 0 2px !important;
+}
+.validade-label { font-size: 4.5pt !important; color: #778 !important; }
+.validade-wrap  { margin-top: 1px !important; }
+.sem-qtd { color: #ccc !important; }
+}
+</style>
+
+</head>
+<body>
+
+<div class="topo">
+  <span class="topo-logo">JCE</span>
+  <span class="topo-titulo">Checklist de Conferência – Sider / Rodotrem</span>
+</div>
+
+<div class="cabecalho-global">
+  <div>
+    <label>Placa 1</label>
+    <input type="text" id="placa1" placeholder="AAA-0000" maxlength="8" oninput="formatarPlaca(this)">
+  </div>
+  <div>
+    <label>Placa 2</label>
+    <input type="text" id="placa2" placeholder="AAA-0000" maxlength="8" oninput="formatarPlaca(this)">
+  </div>
+  <div>
+    <label>Conferente</label>
+    <input type="text" id="conferente" placeholder="Conferente">
+  </div>
+  <div>
+    <label>Data</label>
+    <input type="date" id="data">
+  </div>
+</div>
+
+<div id="listas"></div>
+
+<div class="botoes-fixos no-print">
+  <button class="btn-add-lista" onclick="adicionarLista()">＋ Adicionar Lista</button>
+  <button class="btn-pdf" onclick="window.print()">🖨 Gerar PDF</button>
+</div>
+
+<script>
+var ITENS = [
+  { secao: 'Amarração e Fixação' },
+  { id:'cintas',       nome:'Cintas',         qtd:true  },
+  { id:'catracas',     nome:'Catracas',       qtd:true  },
+  { id:'cantoneiras',  nome:'Cantoneiras',    qtd:true  },
+  { id:'reguas',       nome:'Réguas',         qtd:true  },
+  { secao: 'Segurança' },
+  { id:'estepe1',      nome:'Estepe 1',       qtd:false },
+  { id:'estepe2',      nome:'Estepe 2',       qtd:false },
+  { id:'extintor1',    nome:'Extintor 1',     qtd:false, validade:true },
+  { id:'extintor2',    nome:'Extintor 2',     qtd:false, validade:true },
+  { secao: 'Cobertura' },
+  { id:'lona_lateral', nome:'Lonas Laterais', qtd:false },
+  { id:'lona_teto',    nome:'Lona de Teto',   qtd:false },
+  { id:'cabo_aco',     nome:'Cabo de Aço',    qtd:false },
+  { secao: 'Estrutura' },
+  { id:'bandana',      nome:'Bandana',        qtd:false },
+  { id:'caixas',       nome:'Caixas',         qtd:false },
+  { id:'prot_lateral', nome:'Protetor Lateral',qtd:false },
+  { id:'parachoque',   nome:'Para-choque',    qtd:false },
+  { id:'batente',      nome:'Batente',        qtd:false }
+];
+
+var PNEUS = [
+  { id:'p_1e', nome:'1º Eixo – Esquerdo' },
+  { id:'p_1d', nome:'1º Eixo – Direito'  },
+  { id:'p_2e', nome:'2º Eixo – Esquerdo' },
+  { id:'p_2d', nome:'2º Eixo – Direito'  },
+  { id:'p_3e', nome:'3º Eixo – Esquerdo' },
+  { id:'p_3d', nome:'3º Eixo – Direito'  }
+];
+
+var contadorListas = 0;
+var pneusCount = {};
+
+function formatarPlaca(input) {
+  var v = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (v.length > 3) v = v.slice(0,3) + '-' + v.slice(3,7);
+  input.value = v;
+}
+
+/* Toggle: só um ativo por vez, funciona via classe JS */
+function toggleCheck(uid, tipo) {
+  var tipos = ['ok','nok','na'];
+  for (var i = 0; i < tipos.length; i++) {
+    var t = tipos[i];
+    var chk = document.getElementById('chk_' + t + '_' + uid);
+    if (!chk) continue;
+    var lbl = chk.parentElement;
+    if (t === tipo) {
+      if (chk.checked) {
+        lbl.classList.add('ativo-' + t);
+      } else {
+        lbl.classList.remove('ativo-' + t);
+      }
+    } else {
+      chk.checked = false;
+      lbl.classList.remove('ativo-' + t);
+    }
+  }
+}
+
+function criarCheckGroup(uid) {
+  return '<div class="check-group">'
+    + '<label><input type="checkbox" id="chk_ok_'  + uid + '" onchange="toggleCheck(\'' + uid + '\',\'ok\')"><span class="chk-mark">✓</span>OK</label>'
+    + '<label><input type="checkbox" id="chk_nok_' + uid + '" onchange="toggleCheck(\'' + uid + '\',\'nok\')"><span class="chk-mark">✓</span>NOK</label>'
+    + '<label><input type="checkbox" id="chk_na_'  + uid + '" onchange="toggleCheck(\'' + uid + '\',\'na\')"><span class="chk-mark">✓</span>NA</label>'
+    + '</div>';
+}
+
+function criarLinha(item, listaId, isPar) {
+  if (item.secao) {
+    return '<tr class="section-row"><td colspan="3"><div class="sec-inner"><span>' + item.secao + '</span></div></td></tr>';
+  }
+  var uid = listaId + '_' + item.id;
+  var parClass = isPar ? ' class="par"' : '';
+
+  var colQtd = item.qtd
+    ? '<input class="input-qtd" type="number" min="0" id="qtd_' + uid + '" placeholder="0">'
+    : '<span class="sem-qtd">—</span>';
+
+  var valHtml = item.validade
+    ? '<div class="validade-wrap"><span class="validade-label">Validade</span>'
+      + '<input class="input-validade" type="text" id="val_' + uid + '" placeholder="MMM/AAAA" maxlength="8" oninput="this.value=this.value.toUpperCase()"></div>'
+    : '';
+
+  return '<tr' + parClass + ' id="row_' + uid + '">'
+    + '<td class="item-nome">' + item.nome + '</td>'
+    + '<td style="text-align:center;">' + colQtd + '</td>'
+    + '<td>' + criarCheckGroup(uid) + valHtml + '</td>'
+    + '</tr>';
+}
+
+function renderPneusSecao(listaId, idx) {
+  var label = idx === 1 ? 'Pneus' : 'Pneus – Módulo ' + idx;
+  var html = '<tr class="section-row" id="secpneus_' + listaId + '_' + idx + '">'
+    + '<td colspan="3"><div class="sec-inner"><span>' + label + '</span>'
+    + '<button class="btn-add-pneus no-print" onclick="adicionarPneus(\'' + listaId + '\')">＋ Duplicar</button>'
+    + '</div></td></tr>';
+  for (var i = 0; i < PNEUS.length; i++) {
+    var p = PNEUS[i];
+    var uid = listaId + '_pn' + idx + '_' + p.id;
+    var parClass = (i % 2 === 1) ? ' class="par"' : '';
+    html += '<tr' + parClass + ' id="row_' + uid + '">'
+      + '<td class="item-nome">' + p.nome + '</td>'
+      + '<td><span class="sem-qtd">—</span></td>'
+      + '<td>' + criarCheckGroup(uid) + '</td>'
+      + '</tr>';
+  }
+  return html;
+}
+
+function adicionarPneus(listaId) {
+  pneusCount[listaId] = (pneusCount[listaId] || 1) + 1;
+  var idx   = pneusCount[listaId];
+  var tbody = document.querySelector('#card_' + listaId + ' .checklist-table tbody');
+  var tmp   = document.createElement('tbody');
+  tmp.innerHTML = renderPneusSecao(listaId, idx);
+  while (tmp.firstChild) tbody.appendChild(tmp.firstChild);
+}
+
+function adicionarLista() {
+  contadorListas++;
+  var listaId = 'L' + contadorListas;
+  pneusCount[listaId] = 1;
+
+  var linhas = '';
+  var parIdx = 0;
+  for (var i = 0; i < ITENS.length; i++) {
+    var item = ITENS[i];
+    if (item.secao) {
+      linhas += criarLinha(item, listaId, false);
+    } else {
+      linhas += criarLinha(item, listaId, parIdx % 2 === 1);
+      parIdx++;
+    }
+  }
+  var pneusHtml = renderPneusSecao(listaId, 1);
+
+  var card = document.createElement('div');
+  card.className = 'lista-card';
+  card.id = 'card_' + listaId;
+  card.innerHTML =
+    '<div class="lista-header">'
+    + '<span>Lista nº ' + contadorListas + '</span>'
+    + '<button class="btn-remover-lista no-print" onclick="removerLista(\'' + listaId + '\')">✕ Remover</button>'
+    + '</div>'
+    + '<table class="checklist-table">'
+    + '<thead><tr>'
+    + '<th>Item</th>'
+    + '<th class="th-qtd">Qtd.</th>'
+    + '<th class="th-status">Status</th>'
+    + '</tr></thead>'
+    + '<tbody>' + linhas + pneusHtml + '</tbody>'
+    + '</table>';
+
+  document.getElementById('listas').appendChild(card);
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function removerLista(listaId) {
+  var card = document.getElementById('card_' + listaId);
+  if (card && confirm('Remover esta lista?')) card.remove();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  var h = new Date();
+  document.getElementById('data').value =
+    h.getFullYear() + '-'
+    + String(h.getMonth() + 1).padStart(2, '0') + '-'
+    + String(h.getDate()).padStart(2, '0');
+  adicionarLista();
+});
+</script>
+
+</body>
+</html>
